@@ -6,16 +6,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.MinecraftForge;
 
 
 @SuppressWarnings("null")
 public class ClosetClient {
     private static final ResourceLocation PAGE_TEXTURE = ResourceLocation.fromNamespaceAndPath("closet_mod", "textures/block/page.png");
+    public static boolean isTypewriterHardcoreActive = false;
 
 
     public static void init() {
@@ -36,10 +40,72 @@ public class ClosetClient {
         }
     }
 
-    public static void openCustomTypewriterScreen(BlockPos pos, int paperCount, int surveyDay, String serverFirstPageText) {
-        Minecraft.getInstance().setScreen(new TypewriterSingleScreen(pos, paperCount, surveyDay, serverFirstPageText));
+@net.minecraftforge.eventbus.api.SubscribeEvent
+    public static void onRenderGuiOverlayPre(RenderGuiOverlayEvent.Pre event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.level == null) return;
+
+        // Перехватываем отрисовку здоровья
+        if (event.getOverlay().id().equals(VanillaGuiOverlay.PLAYER_HEALTH.id())) {
+            if (isTypewriterHardcoreActive) {
+                // Подменяем флаг хардкора в мире на true перед рендером
+                LevelInfoAccessor(mc.level, true);
+            }
+        }
     }
 
+    @net.minecraftforge.eventbus.api.SubscribeEvent
+    public static void onRenderGuiOverlayPost(RenderGuiOverlayEvent.Post event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.level == null) return;
+
+        if (event.getOverlay().id().equals(VanillaGuiOverlay.PLAYER_HEALTH.id())) {
+            if (isTypewriterHardcoreActive) {
+                LevelInfoAccessor(mc.level, false);
+            }
+        }
+    }
+
+    private static void LevelInfoAccessor(ClientLevel level, boolean isHardcore) {
+        try {
+            net.minecraft.client.multiplayer.ClientLevel.ClientLevelData data = level.getLevelData();
+            java.lang.reflect.Field hardcoreField = null;
+            Class<?> clazz = data.getClass();
+            
+            while (clazz != null) {
+                try {
+                    hardcoreField = clazz.getDeclaredField("hardcore");
+                    break;
+                } catch (NoSuchFieldException e) {
+                    clazz = clazz.getSuperclass();
+                }
+            }
+            
+            if (hardcoreField != null) {
+                hardcoreField.setAccessible(true);
+                hardcoreField.setBoolean(data, isHardcore);
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    public static void openCustomTypewriterScreen(BlockPos pos, int paperCount, int surveyDay, String serverFirstPageText) {
+        if ("HARDCORE_SYNC".equals(serverFirstPageText)) {
+            isTypewriterHardcoreActive = true;
+            return;
+        }
+
+        if ("HARDCORE_END".equals(serverFirstPageText)) {
+            isTypewriterHardcoreActive = false;
+            if (Minecraft.getInstance().level != null) {
+                LevelInfoAccessor((ClientLevel) Minecraft.getInstance().level, false);
+            }
+            return;
+        }
+
+        isTypewriterHardcoreActive = false;
+        Minecraft.getInstance().setScreen(new TypewriterSingleScreen(pos, paperCount, surveyDay, serverFirstPageText));
+    }
 
     // --- ОДИНОЧНЫЙ ЛИСТ ФОРМАТА А4 ---
     public static class TypewriterSingleScreen extends Screen {
@@ -67,8 +133,6 @@ public class ClosetClient {
             }
             this.localPagesText[0] = serverFirstPageText != null ? serverFirstPageText : " ";
         }
-
-        
 
         @Override
         protected void init() {
@@ -410,7 +474,7 @@ public class ClosetClient {
 
                         be.rewardType = com.closetfunc.event.SurveyManager.calculateRewardType(this.currentSurveyDay, totalNegative);
                         
-                        this.localPagesText[currentPage] = fullPageText + " \n§7загляни в эту печатную машинку завтра\n я буду тебя там ждать*§r";
+                        this.localPagesText[currentPage] = fullPageText + " \n§7загляни в эту печатную машинку завтра\nя буду тебя там ждать*§r";
                         
                         net.minecraft.client.player.LocalPlayer localPlayer = Minecraft.getInstance().player;
                         if (localPlayer != null) {

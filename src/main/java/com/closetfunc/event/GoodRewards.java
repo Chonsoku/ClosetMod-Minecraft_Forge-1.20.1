@@ -2,6 +2,7 @@ package com.closetfunc.event;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.monster.Monster;
@@ -10,6 +11,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+@SuppressWarnings("null")
 public class GoodRewards {
     private static final Map<Integer, ITypewriterReward> REWARDS = new HashMap<>();
 
@@ -24,7 +26,7 @@ public class GoodRewards {
                 }
             }
             @Override
-            public void cleanup(ServerPlayer player, ServerLevel level) {} // Тут чистить нечего
+            public void cleanup(ServerPlayer player, ServerLevel level) {}
         });
 
         // ДЕНЬ 2
@@ -32,10 +34,49 @@ public class GoodRewards {
             @Override
             public void tick(ServerPlayer player, ServerLevel level, int duration) {
                 player.getPersistentData().putBoolean("TypewriterGodMode", true);
+                if (player.tickCount % 20 == 0) {
+                    com.closetfunc.network.ModMessages.sendToPlayer(
+                        new com.closetfunc.network.ModMessages.ClientboundOpenTypewriterPacket(
+                            player.blockPosition(), 0, 0, "HARDCORE_END"
+                        ), 
+                        player
+                    );
+                }
             }
             @Override
             public void cleanup(ServerPlayer player, ServerLevel level) {
                 player.getPersistentData().remove("TypewriterGodMode");
+            }
+        });
+
+        // ДЕНЬ 3
+        REWARDS.put(5, new ITypewriterReward() {
+            @Override
+            public void tick(ServerPlayer player, ServerLevel level, int duration) {
+                if (!player.getPersistentData().getBoolean("TypewriterDay3GoodGiven")) {
+                    player.getPersistentData().putBoolean("TypewriterDay3GoodGiven", true); // Сразу блокируем повторы
+
+                    net.minecraft.world.item.ItemStack[] rewards = {
+                        new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.NETHERITE_HELMET),
+                        new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.NETHERITE_CHESTPLATE),
+                        new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.NETHERITE_LEGGINGS),
+                        new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.NETHERITE_BOOTS),
+                        new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.NETHERITE_SWORD),
+                        new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.NETHERITE_AXE),
+                        new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.NETHERITE_PICKAXE),
+                        new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ELYTRA)
+                    };
+
+                    for (net.minecraft.world.item.ItemStack stack : rewards) {
+                        if (!player.getInventory().add(stack)) {
+                            player.drop(stack, false);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void cleanup(ServerPlayer player, ServerLevel level) {
             }
         });
         

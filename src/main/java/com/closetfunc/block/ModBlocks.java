@@ -305,6 +305,10 @@ public class ModBlocks {
                 return InteractionResult.FAIL;
             }
 
+            if (!level.isClientSide) {
+                typewriterBe.checkAndResetForNewDay(level);
+            }
+
             if (heldItem.is(net.minecraft.world.item.Items.PAPER)) {
                 if (!state.getValue(HAS_PAPER)) {
                     if (!level.isClientSide) {
@@ -359,7 +363,7 @@ public class ModBlocks {
                         playerNBT.putInt("TypewriterCurrentEventId", 0);
                         playerNBT.putBoolean("TypewriterFirstAnswerWasBad", false);
                         
-                        playerNBT.putString("TypewriterFirstPageText", " "); // Стираем текст
+                        playerNBT.putString("TypewriterFirstPageText", " "); 
                     }
                     
                     if (pDialogueStep == 0) {
@@ -370,7 +374,7 @@ public class ModBlocks {
 
                     typewriterBe.surveyDay = pSurveyDay;
                     typewriterBe.dialogueStep = pDialogueStep;
-                    typewriterBe.lastCompletedDay = pLastCompletedDay;
+                    typewriterBe.lastSurveyDay = pLastCompletedDay;
                     typewriterBe.rewardType = playerNBT.getInt("TypewriterRewardType");
                     typewriterBe.currentEventId = playerNBT.getInt("TypewriterCurrentEventId");
                     typewriterBe.firstAnswerWasBad = playerNBT.getBoolean("TypewriterFirstAnswerWasBad");

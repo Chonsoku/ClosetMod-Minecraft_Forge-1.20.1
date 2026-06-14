@@ -237,7 +237,7 @@ public class ModBlockEntities {
         public int dialogueStep = 0;
 
         public int surveyDay = 1;         // Какой день опроса СЕЙЧАС активен (1, 2, 3... 10)
-        public long lastCompletedDay = -1; // На каких сутках мира (level.getDayTime() / 24000) был сдан ПОСЛЕДНИЙ опрос
+        public long lastSurveyDay = -1; // На каких сутках мира (level.getDayTime() / 24000) был сдан ПОСЛЕДНИЙ опрос
 
         public TypewriterBlockEntity(BlockPos pos, BlockState state) {
             super(TYPEWRITER_BE.get(), pos, state);
@@ -249,6 +249,7 @@ public class ModBlockEntities {
         @Override
         protected void saveAdditional(CompoundTag tag) {
             super.saveAdditional(tag);
+            tag.putLong("LastSurveyDay", this.lastSurveyDay);
             tag.putInt("InsertedPaperCount", this.insertedPaperCount);
             tag.putInt("DialogueStep", this.dialogueStep);
             tag.putInt("RewardType", this.rewardType);
@@ -256,7 +257,7 @@ public class ModBlockEntities {
             tag.putBoolean("FirstAnswerWasBad", this.firstAnswerWasBad);
             
             tag.putInt("SurveyDay", this.surveyDay);
-            tag.putLong("LastCompletedDay", this.lastCompletedDay);
+            tag.putLong("LastCompletedDay", this.lastSurveyDay);
 
             ListTag textList = new ListTag();
             for (String text : this.pagesText) {
@@ -268,6 +269,9 @@ public class ModBlockEntities {
         @Override
         public void load(CompoundTag tag) {
             super.load(tag);
+            if (tag.contains("LastSurveyDay")) {
+                this.lastSurveyDay = tag.getLong("LastSurveyDay");
+            }
             this.insertedPaperCount = tag.getInt("InsertedPaperCount");
             this.dialogueStep = tag.getInt("DialogueStep");
             this.rewardType = tag.getInt("RewardType");
@@ -275,7 +279,7 @@ public class ModBlockEntities {
             this.firstAnswerWasBad = tag.getBoolean("FirstAnswerWasBad");
             
             this.surveyDay = tag.contains("SurveyDay") ? tag.getInt("SurveyDay") : 1;
-            this.lastCompletedDay = tag.contains("LastCompletedDay") ? tag.getLong("LastCompletedDay") : -1;
+            this.lastSurveyDay = tag.contains("LastCompletedDay") ? tag.getLong("LastCompletedDay") : -1;
             
             if (tag.contains("PagesText", 9)) {
                 ListTag textList = tag.getList("PagesText", 8);
@@ -288,6 +292,21 @@ public class ModBlockEntities {
 
         public boolean isValidBlockState(BlockState state) {
             return state.is(ModBlocks.TYPEWRITER_BLOCK.get());
+        }
+
+
+        public void checkAndResetForNewDay(net.minecraft.world.level.Level level) {
+            long currentDay = level.getDayTime() / 24000L;
+            if (this.lastSurveyDay < currentDay) {
+                this.dialogueStep = 0;
+                this.rewardType = 0;
+                this.firstAnswerWasBad = false;
+                this.currentEventId = 0;
+                java.util.Arrays.fill(this.pagesText, ""); 
+                
+                this.lastSurveyDay = currentDay;
+                this.setChanged();
+            }
         }
 
 

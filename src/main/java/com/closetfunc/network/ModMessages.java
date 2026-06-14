@@ -41,6 +41,12 @@ public class ModMessages {
         .encoder(ClientboundOpenTypewriterPacket::toBytes)
         .consumerMainThread(ClientboundOpenTypewriterPacket::handle)
         .add();
+
+        net.messageBuilder(ClientboundUpdateHardcoreVisualsPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+            .decoder(ClientboundUpdateHardcoreVisualsPacket::new)
+            .encoder(ClientboundUpdateHardcoreVisualsPacket::toBytes)
+            .consumerMainThread(ClientboundUpdateHardcoreVisualsPacket::handle)
+            .add();
     }
 
     public static <MSG> void sendToServer(MSG message) {
@@ -49,6 +55,20 @@ public class ModMessages {
 
     public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
     INSTANCE.send(net.minecraftforge.network.PacketDistributor.PLAYER.with(() -> player), message);
+    }
+
+    public static class ClientboundUpdateHardcoreVisualsPacket {
+        private final boolean active;
+        public ClientboundUpdateHardcoreVisualsPacket(boolean active) { this.active = active; }
+        public ClientboundUpdateHardcoreVisualsPacket(FriendlyByteBuf buf) { this.active = buf.readBoolean(); }
+        public void toBytes(FriendlyByteBuf buf) { buf.writeBoolean(active); }
+        public boolean handle(Supplier<NetworkEvent.Context> supplier) {
+            NetworkEvent.Context context = supplier.get();
+            context.enqueueWork(() -> {
+                com.closetfunc.client.ClosetClient.isTypewriterHardcoreActive = this.active;
+            });
+            return true;
+        }
     }
 
     public static class ServerboundTypewriterTextPacket {
@@ -119,7 +139,7 @@ public class ModMessages {
                     if (be.dialogueStep == 3) {
                         long currentDayIndex = level.getDayTime() / 24000L;
                         
-                        be.lastCompletedDay = currentDayIndex;
+                        be.lastSurveyDay = currentDayIndex;
                         playerNBT.putLong("TypewriterLastCompletedDay", currentDayIndex);
 
                         long timeOfDay = level.getDayTime() % 24000L;

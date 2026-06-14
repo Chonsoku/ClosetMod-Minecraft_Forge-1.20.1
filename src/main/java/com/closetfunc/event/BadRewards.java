@@ -2,6 +2,7 @@ package com.closetfunc.event;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -11,6 +12,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+@SuppressWarnings("null")
 public class BadRewards {
     private static final Map<Integer, ITypewriterReward> REWARDS = new HashMap<>();
 
@@ -19,13 +21,24 @@ public class BadRewards {
         REWARDS.put(2, new ITypewriterReward() {
             @Override
             public void tick(ServerPlayer player, ServerLevel level, int duration) {
-                if (!player.hasEffect(MobEffects.DIG_SLOWDOWN)) {
-                    player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, duration, 1, false, false));
+                if (!player.hasEffect(MobEffects.MOVEMENT_SLOWDOWN)) {
+                    player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 0, false, false));
+                }
+                
+                if (!player.hasEffect(MobEffects.WEAKNESS)) {
+                    player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration, 0, false, false));
+                }
+
+                if (!player.hasEffect(MobEffects.UNLUCK)) {
+                    player.addEffect(new MobEffectInstance(MobEffects.UNLUCK, duration, 0, false, false));
                 }
             }
+
             @Override
             public void cleanup(ServerPlayer player, ServerLevel level) {
-                player.removeEffect(MobEffects.DIG_SLOWDOWN);
+                player.removeEffect(MobEffects.WEAKNESS);
+                player.removeEffect(MobEffects.UNLUCK);
+                player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
             }
         });
 
@@ -35,25 +48,48 @@ public class BadRewards {
             public void tick(ServerPlayer player, ServerLevel level, int duration) {
                 if (!player.getPersistentData().getBoolean("TypewriterHardcoreMode")) {
                     player.getPersistentData().putBoolean("TypewriterHardcoreMode", true);
-                    if (player.gameMode.getGameModeForPlayer() != GameType.SURVIVAL) {
-                        player.setGameMode(GameType.SURVIVAL);
-                    }
                 }
-                
-                // Буквально отключаем естественную регенерацию здоровья через ванильный игровой фрукт (игровое правило)
-                // Это заблокирует реген от еды на 100% без костылей с эвентами!
-                level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_NATURAL_REGENERATION).set(false, level.getServer());
             }
+
             @Override
             public void cleanup(ServerPlayer player, ServerLevel level) {
                 player.getPersistentData().remove("TypewriterHardcoreMode");
-                // Возвращаем регенерацию обратно на следующий день
-                level.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_NATURAL_REGENERATION).set(true, level.getServer());
+                player.setGameMode(GameType.SURVIVAL);
             }
         });
 
-        
-        // ДАЛЕЕ ТУТ БУДУТ ОСТАЛЬНЫЕ ДНИ...
+        // ДЕНЬ 3
+        REWARDS.put(6, new ITypewriterReward() {
+            @Override
+            public void tick(ServerPlayer player, ServerLevel level, int duration) {
+                if (!player.getPersistentData().getBoolean("TypewriterDay3InventoryStolen")) {
+                    player.getPersistentData().putBoolean("TypewriterDay3InventoryStolen", true);
+
+                    net.minecraft.nbt.ListTag inventoryList = new net.minecraft.nbt.ListTag();
+                    player.getInventory().save(inventoryList);
+                    
+                    player.getPersistentData().put("StolenInventoryData", inventoryList);
+                    player.getInventory().clearContent();
+                    
+                    net.minecraft.world.item.ItemStack closetStack = new net.minecraft.world.item.ItemStack(
+                        com.closetfunc.item.ModItems.CLOSET_ITEM.get(), 10);
+                    player.getInventory().add(closetStack);
+                }
+            }
+
+            @Override
+            public void cleanup(ServerPlayer player, ServerLevel level) {
+                player.getPersistentData().remove("TypewriterHardcoreMode");
+                player.getPersistentData().remove("TypewriterDay3InventoryStolen");
+                
+                if (player.getPersistentData().contains("StolenInventoryData")) {
+                    net.minecraft.nbt.ListTag inventoryList = player.getPersistentData().getList("StolenInventoryData", net.minecraft.nbt.Tag.TAG_COMPOUND);
+                    player.getInventory().load(inventoryList);
+                }
+                
+                player.getPersistentData().remove("StolenInventoryData");
+            }
+        });
     }
 
     public static void execute(int rewardId, ServerPlayer player, ServerLevel level, int duration) {
@@ -78,15 +114,12 @@ public class BadRewards {
     @SubscribeEvent
     public static void onHardcoreDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof ServerPlayer player && player.getPersistentData().getBoolean("TypewriterHardcoreMode")) {
-            // НЕ отменяем эвент! Даем игроку умереть, чтобы Майнкрафт отработал логику удаления мира,
-            // ЕСЛИ синглплеер изначально был создан как хардкор.
-            // Но чтобы забанить игрока на обычном сервере/мире, мы принудительно переведем его в спектаторы при респавне:
             player.setGameMode(GameType.SPECTATOR);
             
             player.sendSystemMessage(net.minecraft.network.chat.Component.translatable("chat.closet_mod.typewriter.death_hardcore")
                     .withStyle(net.minecraft.ChatFormatting.DARK_RED).withStyle(net.minecraft.ChatFormatting.BOLD));
             
-            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), 
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                     net.minecraft.sounds.SoundEvents.LIGHTNING_BOLT_THUNDER, net.minecraft.sounds.SoundSource.WEATHER, 1.0F, 0.5F);
         }
     }

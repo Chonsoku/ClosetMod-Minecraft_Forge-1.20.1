@@ -1,22 +1,23 @@
 package com.closetfunc.event;
 
+
 import com.closetfunc.block.ModBlocks;
 import com.closetfunc.block_entity.ModBlockEntities;
-import com.closetfunc.sound.ModSounds;
+
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+
 
 @SuppressWarnings("null")
 public class ModEvents {    
@@ -31,13 +32,17 @@ public class ModEvents {
         }
     }
 
+
     @SubscribeEvent
     public static void onLeftClickDefense(PlayerInteractEvent.LeftClickBlock event) {
         BlockState state = event.getLevel().getBlockState(event.getPos());
         if (state.is(ModBlocks.CLOSET_BLOCK.get()) || state.is(ModBlocks.CLOSET_BATIM_BLOCK.get()) || state.is(ModBlocks.CLOSET_BALDI_BLOCK.get())) {
-            event.setCanceled(true);
+            if (event.getEntity().getPersistentData().getBoolean("IsInCloset")) {
+                event.setCanceled(true);
+            }
         }
     }
+
 
     @SubscribeEvent
     public static void onMobTick(LivingEvent.LivingTickEvent event) {
@@ -60,6 +65,12 @@ public class ModEvents {
     }
 
 
+    @SubscribeEvent
+    public static void onPlayerStartTracking(PlayerEvent.StartTracking event) {
+        // УДАЛЕН неиспользуемый код
+    }
+
+
     // ТЫ В ШКАФУ, КАК НЕУЯЗВИМЫЙ!!! ^.^
     @SubscribeEvent
     public static void InvinciblePlayer(net.minecraftforge.event.entity.living.LivingHurtEvent event) {
@@ -69,90 +80,89 @@ public class ModEvents {
             }
         }
     }
-
+    
     @SubscribeEvent
-    public static void onPlayerProximityCheck(TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || event.player.level().isClientSide || event.player.tickCount % 20 != 0) return;
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END || event.player.level().isClientSide) return;
         
-        ServerPlayer player = (ServerPlayer) event.player;
-        if (player.getPersistentData().getBoolean("IsInCloset")) return;
-        
+        net.minecraft.server.level.ServerPlayer player = (net.minecraft.server.level.ServerPlayer) event.player;
         net.minecraft.server.level.ServerLevel level = player.serverLevel();
-        BlockPos playerPos = player.blockPosition();
-        
-        int radius = 6; 
-        for (BlockPos targetPos : BlockPos.betweenClosed(playerPos.offset(-radius, -2, -radius), playerPos.offset(radius, 2, radius))) {
-            BlockPos immutablePos = targetPos.immutable();
-            BlockState state = level.getBlockState(immutablePos);
-            
-            if (state.is(ModBlocks.CLOSET_BLOCK.get()) && state.getValue(ModBlocks.ClosetBlock.HALF) == DoubleBlockHalf.LOWER) {
 
-                BlockEntity be = level.getBlockEntity(immutablePos);
-                if (be instanceof ModBlockEntities.ClosetBlockEntity closetBe) {
-                    if (closetBe.trappedPlayerId != null) continue;
-                    if (closetBe.getPersistentData().getBoolean("CheckedForBatim")) {
-                        continue; 
-                    }
-                    closetBe.getPersistentData().putBoolean("CheckedForBatim", true);
-                    closetBe.setChanged(); 
 
-                    // Шанс на появление пасхальных шкафов: 5%
-                    if (level.random.nextFloat() > 0.05F) {
-                        continue; 
-                    }
+        long currentDayIndex = level.getDayTime() / 24000L;
+        long timeOfDay = level.getDayTime() % 24000L;
+        int ticksUntilNewDay = (int) (24000L - timeOfDay);
+        if (ticksUntilNewDay <= 0) ticksUntilNewDay = 1;
 
-                    // После выпадения шанса проверяем, в какой именно шкаф превратить (baldi/bendy)
-                    boolean transformToBaldi = level.random.nextBoolean();
 
-                    net.minecraft.core.Direction currentFacing = state.getValue(ModBlocks.ClosetBlock.FACING);
+        // БЛОК 1: Проверка expiryDay и cleanup
+        if (player.getPersistentData().contains("TypewriterEffectsExpiryDay")) {
+            long expiryDay = player.getPersistentData().getLong("TypewriterEffectsExpiryDay"); 
 
-                    level.removeBlockEntity(immutablePos);
-                    level.setBlock(immutablePos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
-                    level.setBlock(immutablePos.above(), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
 
-                    BlockState newLowerState;
-                    BlockState newTopState;
-                    net.minecraft.sounds.SoundEvent spawnSound;
-
-                    if (transformToBaldi) {
-                        newLowerState = ModBlocks.CLOSET_BALDI_BLOCK.get().defaultBlockState()
-                                .setValue(ModBlocks.ClosetBlock.FACING, currentFacing)
-                                .setValue(ModBlocks.ClosetBlock.OPEN, false)
-                                .setValue(ModBlocks.ClosetBlock.HALF, DoubleBlockHalf.LOWER);
-                                
-                        newTopState = ModBlocks.CLOSET_BALDI_BLOCK.get().defaultBlockState()
-                                .setValue(ModBlocks.ClosetBlock.FACING, currentFacing)
-                                .setValue(ModBlocks.ClosetBlock.OPEN, false)
-                                .setValue(ModBlocks.ClosetBlock.HALF, DoubleBlockHalf.UPPER);
-                        
-                        spawnSound = ModSounds.BALDI_SPAWN.get(); // Скример при появление шкафа из Балди
-                    } else {
-                        newLowerState = ModBlocks.CLOSET_BATIM_BLOCK.get().defaultBlockState()
-                                .setValue(ModBlocks.ClosetBlock.FACING, currentFacing)
-                                .setValue(ModBlocks.ClosetBlock.OPEN, false)
-                                .setValue(ModBlocks.ClosetBlock.HALF, DoubleBlockHalf.LOWER);
-                                
-                        newTopState = ModBlocks.CLOSET_BATIM_BLOCK.get().defaultBlockState()
-                                .setValue(ModBlocks.ClosetBlock.FACING, currentFacing)
-                                .setValue(ModBlocks.ClosetBlock.OPEN, false)
-                                .setValue(ModBlocks.ClosetBlock.HALF, DoubleBlockHalf.UPPER);
-                        
-                        spawnSound = ModSounds.BATIM_SPAWN.get(); // Скример при появление шкафа из Бенди
-                    }
-
-                    level.setBlock(immutablePos, newLowerState, 3);
-                    level.setBlock(immutablePos.above(), newTopState, 3);
+            if (currentDayIndex >= expiryDay) {
+                int activeRewardId = player.getPersistentData().getInt("ActiveTypewriterRewardId");
+                
+                // Вызываем cleanup перед удалением флагов
+                if (activeRewardId % 2 != 0) {
+                    GoodRewards.cleanup(activeRewardId, player, level);
+                } else {
+                    BadRewards.cleanup(activeRewardId, player, level);
                     
-                    level.getChunkSource().blockChanged(immutablePos);
-                    level.getChunkSource().blockChanged(immutablePos.above());
+                    if (activeRewardId == 4) {
+                        com.closetfunc.network.ModMessages.sendToPlayer(
+                            new com.closetfunc.network.ModMessages.ClientboundOpenTypewriterPacket(
+                                player.blockPosition(), 0, 0, "HARDCORE_END"
+                            ), 
+                            player
+                        );
+                    }
+                }
+                
+                // Удаляем флаги наград
+                player.getPersistentData().remove("ActiveTypewriterRewardId");
+                player.getPersistentData().remove("TypewriterEffectsExpiryDay");
+            }
+        }
 
-                    level.playSound(null, immutablePos.getX() + 0.5D, immutablePos.getY() + 0.5D, immutablePos.getZ() + 0.5D, 
-                            spawnSound, net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 1.0F);
 
-                    // Для Балди-шкафа передаём: 20 тиков (1 сек), для Бенди-шкафа: 60 тиков (3 сек)
-                    int duration = transformToBaldi ? 20 : 60;
-                    applyScreamerEffects(player, level, duration);
-                    break; 
+        // БЛОК 2: execute() каждый тик (НО только если есть ActiveTypewriterRewardId и НЕ достигнута expiryDay)
+        if (player.getPersistentData().contains("ActiveTypewriterRewardId")) {
+            // ПРОВЕРКА: Не достигнута ли expiryDay (если достигнута - не вызываем execute())
+            if (!player.getPersistentData().contains("TypewriterEffectsExpiryDay") || 
+                level.getDayTime() / 24000L < player.getPersistentData().getLong("TypewriterEffectsExpiryDay")) {
+                
+                int activeRewardId = player.getPersistentData().getInt("ActiveTypewriterRewardId");
+                
+                if (activeRewardId % 2 != 0) {
+                    GoodRewards.execute(activeRewardId, player, level, ticksUntilNewDay);
+                } else {
+                    BadRewards.execute(activeRewardId, player, level, ticksUntilNewDay);
+                }
+
+
+                if (activeRewardId == 4 && player.tickCount % 20 == 0) {
+                    com.closetfunc.network.ModMessages.sendToPlayer(
+                        new com.closetfunc.network.ModMessages.ClientboundOpenTypewriterPacket(player.blockPosition(), 0, 2, "HARDCORE_SYNC"), 
+                        player
+                    );
+                }
+            }
+        }
+
+
+        // БЛОК 3: Выдача наград при наличии typewriter с rewardType > 0
+        if (player.tickCount % 20 == 0) {
+            int radius = 16;
+            for (BlockPos targetPos : BlockPos.betweenClosed(player.blockPosition().offset(-radius, -4, -radius), player.blockPosition().offset(radius, 4, radius))) {
+                if (level.getBlockEntity(targetPos) instanceof ModBlockEntities.TypewriterBlockEntity typewriter && typewriter.rewardType > 0) {
+                    if (!player.getPersistentData().contains("ActiveTypewriterRewardId")) {
+                        SurveyManager.triggerReward(typewriter.rewardType, player, level, ticksUntilNewDay);
+                        
+                        typewriter.rewardType = 0;  
+                        typewriter.setChanged();
+                        level.sendBlockUpdated(targetPos, level.getBlockState(targetPos), level.getBlockState(targetPos), 3);
+                    }
                 }
             }
         }
@@ -160,11 +170,14 @@ public class ModEvents {
         // Таймер пасхалки на "Death Note" X.X
         long currentGameTime = level.getGameTime();
 
+
         if (player.getPersistentData().contains("DeathNoteTimeTarget")) {
             long deathTimeTarget = player.getPersistentData().getLong("DeathNoteTimeTarget");
 
+
             if (currentGameTime >= deathTimeTarget) {
                 player.getPersistentData().remove("DeathNoteTimeTarget");
+
 
                 net.minecraft.world.damagesource.DamageSource heartAttackSource = 
                     new net.minecraft.world.damagesource.DamageSource(
@@ -176,6 +189,7 @@ public class ModEvents {
                             return net.minecraft.network.chat.Component.translatable("death.attack.heart_attack", entity.getDisplayName());
                         }
                     };
+
 
                 player.hurt(heartAttackSource, Float.MAX_VALUE);
             }
@@ -195,6 +209,7 @@ public class ModEvents {
         ));
     }
 
+
     @SubscribeEvent
     public static void onPlayerDayModifiers(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || event.player.level().isClientSide) return;
@@ -205,10 +220,12 @@ public class ModEvents {
         long currentWorldDayIndex = level.getDayTime() / 24000L;
         long timeOfDay = level.getDayTime() % 24000L;
 
+
         if (player.getPersistentData().contains("DeathNoteTimeTarget")) {
             long deathTimeTarget = player.getPersistentData().getLong("DeathNoteTimeTarget");
             if (level.getGameTime() >= deathTimeTarget) {
                 player.getPersistentData().remove("DeathNoteTimeTarget");
+
 
                 net.minecraft.world.damagesource.DamageSource heartAttackSource = 
                     new net.minecraft.world.damagesource.DamageSource(
@@ -221,9 +238,11 @@ public class ModEvents {
                         }
                     };
 
+
                 player.hurt(heartAttackSource, Float.MAX_VALUE);
             }
         }
+
 
         if (player.getPersistentData().contains("TypewriterEffectsExpiryDay")) {
             long expiryDay = player.getPersistentData().getLong("TypewriterEffectsExpiryDay");
@@ -233,33 +252,22 @@ public class ModEvents {
                     GoodRewards.cleanup(activeRewardId, player, level);
                 } else {
                     BadRewards.cleanup(activeRewardId, player, level);
+                    if (activeRewardId == 4) {
+                        com.closetfunc.network.ModMessages.sendToPlayer(
+                            new com.closetfunc.network.ModMessages.ClientboundOpenTypewriterPacket(
+                                player.blockPosition(), 0, 0, "HARDCORE_END"
+                            ), 
+                            player
+                        );
+                    }
                 }
                 player.getPersistentData().remove("ActiveTypewriterRewardId");
                 player.getPersistentData().remove("TypewriterEffectsExpiryDay");
             }
         }
 
+
         int ticksUntilNewDay = (int) (24000L - timeOfDay);
         if (ticksUntilNewDay <= 0) ticksUntilNewDay = 1;
-
-        if (player.getPersistentData().contains("ActiveTypewriterRewardId")) {
-            int activeRewardId = player.getPersistentData().getInt("ActiveTypewriterRewardId");
-            
-            if (activeRewardId % 2 != 0) {
-                GoodRewards.execute(activeRewardId, player, level, ticksUntilNewDay);
-            } else {
-                BadRewards.execute(activeRewardId, player, level, ticksUntilNewDay);
-            }
-        }
-
-        if (player.tickCount % 20 == 0) {
-            int radius = 16;
-            for (BlockPos targetPos : BlockPos.betweenClosed(player.blockPosition().offset(-radius, -4, -radius), player.blockPosition().offset(radius, 4, radius))) {
-                if (level.getBlockEntity(targetPos) instanceof ModBlockEntities.TypewriterBlockEntity typewriter && typewriter.rewardType > 0) {
-                    if (typewriter.rewardType == 1) GoodRewards.execute(1, player, level, ticksUntilNewDay);
-                    if (typewriter.rewardType == 2) BadRewards.execute(2, player, level, ticksUntilNewDay);
-                }
-            }
-        }
     }
 }

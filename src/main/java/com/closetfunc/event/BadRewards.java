@@ -47,6 +47,7 @@ public class BadRewards {
             @Override
             public void tick(ServerPlayer player, ServerLevel level, int duration) {
                 if (!player.getPersistentData().getBoolean("TypewriterHardcoreMode")) {
+                    player.setGameMode(GameType.SURVIVAL);
                     player.getPersistentData().putBoolean("TypewriterHardcoreMode", true);
                 }
             }
@@ -80,14 +81,13 @@ public class BadRewards {
             @Override
             public void cleanup(ServerPlayer player, ServerLevel level) {
                 player.getPersistentData().remove("TypewriterHardcoreMode");
-                player.getPersistentData().remove("TypewriterDay3InventoryStolen");
+                
                 
                 if (player.getPersistentData().contains("StolenInventoryData")) {
                     net.minecraft.nbt.ListTag inventoryList = player.getPersistentData().getList("StolenInventoryData", net.minecraft.nbt.Tag.TAG_COMPOUND);
                     player.getInventory().load(inventoryList);
+                    player.getInventory().setChanged();
                 }
-                
-                player.getPersistentData().remove("StolenInventoryData");
             }
         });
     }

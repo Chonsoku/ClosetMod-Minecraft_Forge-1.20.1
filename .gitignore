@@ -1,0 +1,8 @@
+.gradle/
+build/
+bin/
+out/
+.idea/
+*.log
+run/
+*.code-workspace

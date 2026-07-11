@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Specification-Title: closet_mod
-Specification-Vendor: YourNameHere, OtherNameHere
-Specification-Version: 1
-Implementation-Title: HORROR-CLOSET_mod
-Implementation-Version: 1.0.0
-Implementation-Vendor: YourNameHere, OtherNameHere
-Implementation-Timestamp: 2026-05-30T19:36:11+0300
-

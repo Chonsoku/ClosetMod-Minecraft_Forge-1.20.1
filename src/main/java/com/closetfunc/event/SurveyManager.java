@@ -15,6 +15,7 @@ public class SurveyManager {
 
     public static void triggerReward(int rewardType, ServerPlayer player, ServerLevel level, int duration) {
         player.getPersistentData().putInt("ActiveTypewriterRewardId", rewardType);
+        player.getPersistentData().remove("TypewriterEffectsCleanedUp");
         
         long currentWorldDayIndex = level.getDayTime() / 24000L;
         player.getPersistentData().putLong("TypewriterEffectsExpiryDay", currentWorldDayIndex + 1);

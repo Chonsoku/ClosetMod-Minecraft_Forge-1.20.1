@@ -7,9 +7,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @SuppressWarnings("null")
@@ -90,6 +92,24 @@ public class BadRewards {
                 }
             }
         });
+
+        // ДЕНЬ 4
+        REWARDS.put(8, new ITypewriterReward() {
+            @Override
+            public void tick(ServerPlayer player, ServerLevel level, int duration) {
+                if (!player.hasEffect(MobEffects.WEAKNESS)) {
+                    player.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration, 255, false, false));
+                }
+                if (!player.hasEffect(MobEffects.MOVEMENT_SLOWDOWN)) {
+                    player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, 1, false, false));
+                }
+            }
+            @Override
+            public void cleanup(ServerPlayer player, ServerLevel level) {
+                player.removeEffect(MobEffects.WEAKNESS);
+                player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
+            }
+        });
     }
 
     public static void execute(int rewardId, ServerPlayer player, ServerLevel level, int duration) {
@@ -121,6 +141,17 @@ public class BadRewards {
             
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                     net.minecraft.sounds.SoundEvents.LIGHTNING_BOLT_THUNDER, net.minecraft.sounds.SoundSource.WEATHER, 1.0F, 0.5F);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onGlassPlayer(LivingHurtEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            int rewardId = player.getPersistentData().getInt("ActiveTypewriterRewardId");
+            if (rewardId == 8) {
+                float currentHp = player.getHealth();
+                event.setAmount(currentHp / 2.0F);
+            }
         }
     }
 }

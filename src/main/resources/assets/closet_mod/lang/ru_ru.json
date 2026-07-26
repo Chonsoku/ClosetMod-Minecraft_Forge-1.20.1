@@ -29,11 +29,21 @@
   "text.closet_mod.typewriter.step3.2": "Хм. Допустим..\nТеперь, как на счёт комплекта незеритовой брони и оружия, вместе с элитрами?3",
 
 
+  /// Сообщения для дня 4
+  "text.closet_mod.typewriter.step4.1": "Ты дошёл так далеко...\nГотов ли ты принять мою настоящую силу?^",
+  "text.closet_mod.typewriter.step4.2": "Или ты предпочнёшь узнать что такое настоящая слабость?]",
+
+
   /// Сообщения для событий
   "text.closet_mod.typewriter.event1.good": "Ты мне нравишься33\n Думаю... Стоит избавится от всех враждебных сущностей#\n",
   "text.closet_mod.typewriter.event1.bad": "Я тебя понял... Прощай. Увидимся завтра-\n",
   "text.closet_mod.typewriter.event2.good": "Ты продолжаешь мне нравится>>. Пора тебе ощутить себя полностью непобидимым!=\n",
   "text.closet_mod.typewriter.event2.bad": "Жаль... Зря ты отказываешься от таких полезных подарков(\n",
   "text.closet_mod.typewriter.event3.good": "Ты весьма предказуем, но мне это в тебе пожалуй и нравится@\n",
-  "text.closet_mod.typewriter.event3.bad": "что+ты+такое/\n"
+  "text.closet_mod.typewriter.event3.bad": "что+ты+такое/\n",
+
+
+  /// События дня 4
+  "text.closet_mod.typewriter.event4.good": "Ты стал одним со мной... Сила ОДНОГО УДАРА теперь твоя!>\n",
+  "text.closet_mod.typewriter.event4.bad": "Теперь ты хрупок как стекло... Один удар и ты на грани смерти!<\n"
 }

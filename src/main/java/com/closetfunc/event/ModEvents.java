@@ -119,34 +119,30 @@ public class ModEvents {
                     }
                 }
                 
-                // Удаляем флаги наград
+                // Удаляем флаги наград + ставим флаг что cleanup выполнен
                 player.getPersistentData().remove("ActiveTypewriterRewardId");
                 player.getPersistentData().remove("TypewriterEffectsExpiryDay");
+                player.getPersistentData().putBoolean("TypewriterEffectsCleanedUp", true);
             }
         }
 
 
-        // БЛОК 2: execute() каждый тик (НО только если есть ActiveTypewriterRewardId и НЕ достигнута expiryDay)
-        if (player.getPersistentData().contains("ActiveTypewriterRewardId")) {
-            // ПРОВЕРКА: Не достигнута ли expiryDay (если достигнута - не вызываем execute())
-            if (!player.getPersistentData().contains("TypewriterEffectsExpiryDay") || 
-                level.getDayTime() / 24000L < player.getPersistentData().getLong("TypewriterEffectsExpiryDay")) {
-                
-                int activeRewardId = player.getPersistentData().getInt("ActiveTypewriterRewardId");
-                
-                if (activeRewardId % 2 != 0) {
-                    GoodRewards.execute(activeRewardId, player, level, ticksUntilNewDay);
-                } else {
-                    BadRewards.execute(activeRewardId, player, level, ticksUntilNewDay);
-                }
+        // БЛОК 2: execute() каждый тик (НО только если есть ActiveTypewriterRewardId и cleanup ещё не был вызван)
+        if (player.getPersistentData().contains("ActiveTypewriterRewardId") && 
+            !player.getPersistentData().getBoolean("TypewriterEffectsCleanedUp")) {
+            int activeRewardId = player.getPersistentData().getInt("ActiveTypewriterRewardId");
+            
+            if (activeRewardId % 2 != 0) {
+                GoodRewards.execute(activeRewardId, player, level, ticksUntilNewDay);
+            } else {
+                BadRewards.execute(activeRewardId, player, level, ticksUntilNewDay);
+            }
 
-
-                if (activeRewardId == 4 && player.tickCount % 20 == 0) {
-                    com.closetfunc.network.ModMessages.sendToPlayer(
-                        new com.closetfunc.network.ModMessages.ClientboundOpenTypewriterPacket(player.blockPosition(), 0, 2, "HARDCORE_SYNC"), 
-                        player
-                    );
-                }
+            if (activeRewardId == 4 && player.tickCount % 20 == 0) {
+                com.closetfunc.network.ModMessages.sendToPlayer(
+                    new com.closetfunc.network.ModMessages.ClientboundOpenTypewriterPacket(player.blockPosition(), 0, 2, "HARDCORE_SYNC"), 
+                    player
+                );
             }
         }
 
@@ -216,58 +212,5 @@ public class ModEvents {
         
         ServerPlayer player = (ServerPlayer) event.player;
         net.minecraft.server.level.ServerLevel level = player.serverLevel();
-        
-        long currentWorldDayIndex = level.getDayTime() / 24000L;
-        long timeOfDay = level.getDayTime() % 24000L;
-
-
-        if (player.getPersistentData().contains("DeathNoteTimeTarget")) {
-            long deathTimeTarget = player.getPersistentData().getLong("DeathNoteTimeTarget");
-            if (level.getGameTime() >= deathTimeTarget) {
-                player.getPersistentData().remove("DeathNoteTimeTarget");
-
-
-                net.minecraft.world.damagesource.DamageSource heartAttackSource = 
-                    new net.minecraft.world.damagesource.DamageSource(
-                        level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.DAMAGE_TYPE)
-                            .getHolderOrThrow(net.minecraft.world.damagesource.DamageTypes.FELL_OUT_OF_WORLD)
-                    ) {
-                        @Override
-                        public net.minecraft.network.chat.Component getLocalizedDeathMessage(net.minecraft.world.entity.LivingEntity entity) {
-                            return net.minecraft.network.chat.Component.translatable("death.attack.heart_attack", entity.getDisplayName());
-                        }
-                    };
-
-
-                player.hurt(heartAttackSource, Float.MAX_VALUE);
-            }
-        }
-
-
-        if (player.getPersistentData().contains("TypewriterEffectsExpiryDay")) {
-            long expiryDay = player.getPersistentData().getLong("TypewriterEffectsExpiryDay");
-            if (currentWorldDayIndex >= expiryDay) {
-                int activeRewardId = player.getPersistentData().getInt("ActiveTypewriterRewardId");
-                if (activeRewardId % 2 != 0) {
-                    GoodRewards.cleanup(activeRewardId, player, level);
-                } else {
-                    BadRewards.cleanup(activeRewardId, player, level);
-                    if (activeRewardId == 4) {
-                        com.closetfunc.network.ModMessages.sendToPlayer(
-                            new com.closetfunc.network.ModMessages.ClientboundOpenTypewriterPacket(
-                                player.blockPosition(), 0, 0, "HARDCORE_END"
-                            ), 
-                            player
-                        );
-                    }
-                }
-                player.getPersistentData().remove("ActiveTypewriterRewardId");
-                player.getPersistentData().remove("TypewriterEffectsExpiryDay");
-            }
-        }
-
-
-        int ticksUntilNewDay = (int) (24000L - timeOfDay);
-        if (ticksUntilNewDay <= 0) ticksUntilNewDay = 1;
     }
 }

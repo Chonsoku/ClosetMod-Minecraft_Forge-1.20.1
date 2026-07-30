@@ -4,7 +4,6 @@ package com.closetfunc.event;
 import com.closetfunc.block.ModBlocks;
 import com.closetfunc.block_entity.ModBlockEntities;
 
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Mob;
@@ -67,7 +66,6 @@ public class ModEvents {
 
     @SubscribeEvent
     public static void onPlayerStartTracking(PlayerEvent.StartTracking event) {
-        // УДАЛЕН неиспользуемый код
     }
 
 
@@ -95,7 +93,6 @@ public class ModEvents {
         if (ticksUntilNewDay <= 0) ticksUntilNewDay = 1;
 
 
-        // БЛОК 1: Проверка expiryDay и cleanup
         if (player.getPersistentData().contains("TypewriterEffectsExpiryDay")) {
             long expiryDay = player.getPersistentData().getLong("TypewriterEffectsExpiryDay"); 
 
@@ -103,8 +100,9 @@ public class ModEvents {
             if (currentDayIndex >= expiryDay) {
                 int activeRewardId = player.getPersistentData().getInt("ActiveTypewriterRewardId");
                 
-                // Вызываем cleanup перед удалением флагов
-                if (activeRewardId % 2 != 0) {
+                if (activeRewardId == SurveyManager.SPECIAL_EVENT_DAY_5 || activeRewardId == SurveyManager.SPECIAL_EVENT_DAY_10) {
+                    SpecialEvents.cleanup(activeRewardId, player, level);
+                } else if (activeRewardId % 2 != 0) {
                     GoodRewards.cleanup(activeRewardId, player, level);
                 } else {
                     BadRewards.cleanup(activeRewardId, player, level);
@@ -119,7 +117,6 @@ public class ModEvents {
                     }
                 }
                 
-                // Удаляем флаги наград + ставим флаг что cleanup выполнен
                 player.getPersistentData().remove("ActiveTypewriterRewardId");
                 player.getPersistentData().remove("TypewriterEffectsExpiryDay");
                 player.getPersistentData().putBoolean("TypewriterEffectsCleanedUp", true);
@@ -127,12 +124,13 @@ public class ModEvents {
         }
 
 
-        // БЛОК 2: execute() каждый тик (НО только если есть ActiveTypewriterRewardId и cleanup ещё не был вызван)
         if (player.getPersistentData().contains("ActiveTypewriterRewardId") && 
             !player.getPersistentData().getBoolean("TypewriterEffectsCleanedUp")) {
             int activeRewardId = player.getPersistentData().getInt("ActiveTypewriterRewardId");
             
-            if (activeRewardId % 2 != 0) {
+            if (activeRewardId == SurveyManager.SPECIAL_EVENT_DAY_5 || activeRewardId == SurveyManager.SPECIAL_EVENT_DAY_10) {
+                SpecialEvents.execute(activeRewardId, player, level, ticksUntilNewDay);
+            } else if (activeRewardId % 2 != 0) {
                 GoodRewards.execute(activeRewardId, player, level, ticksUntilNewDay);
             } else {
                 BadRewards.execute(activeRewardId, player, level, ticksUntilNewDay);
@@ -147,7 +145,6 @@ public class ModEvents {
         }
 
 
-        // БЛОК 3: Выдача наград при наличии typewriter с rewardType > 0
         if (player.tickCount % 20 == 0) {
             int radius = 16;
             for (BlockPos targetPos : BlockPos.betweenClosed(player.blockPosition().offset(-radius, -4, -radius), player.blockPosition().offset(radius, 4, radius))) {

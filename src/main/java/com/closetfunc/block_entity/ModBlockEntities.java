@@ -302,7 +302,6 @@ public class ModBlockEntities {
                 this.rewardType = 0;
                 this.firstAnswerWasBad = false;
                 this.currentEventId = 0;
-                java.util.Arrays.fill(this.pagesText, ""); 
                 
                 this.lastSurveyDay = currentDay;
                 this.setChanged();

@@ -34,6 +34,7 @@ public class MainCloset {
         MinecraftForge.EVENT_BUS.register(ModEvents.class);
         MinecraftForge.EVENT_BUS.register(GoodRewards.class);
         MinecraftForge.EVENT_BUS.register(BadRewards.class);
+        MinecraftForge.EVENT_BUS.register(SpecialEvents.class);
         MinecraftForge.EVENT_BUS.register(ModBlockEntities.ClosetBlockEntity.class);
         
         // Пасхалка на "Death Note"

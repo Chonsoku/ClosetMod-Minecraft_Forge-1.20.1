@@ -5,6 +5,8 @@ import java.util.Map;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -80,6 +82,20 @@ public class GoodRewards {
             }
         });
         
+        // ДЕНЬ 4
+        REWARDS.put(7, new ITypewriterReward() {
+            @Override
+            public void tick(ServerPlayer player, ServerLevel level, int duration) {
+                if (!player.hasEffect(MobEffects.REGENERATION)) {
+                    player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, duration, 1, false, false));
+                }
+            }
+            @Override
+            public void cleanup(ServerPlayer player, ServerLevel level) {
+                player.removeEffect(MobEffects.REGENERATION);
+            }
+        });
+
         // ДАЛЕЕ ТУТ БУДУТ ОСТАЛЬНЫЕ ДНИ...
     }
 
@@ -109,6 +125,16 @@ public class GoodRewards {
     public static void onGodModeDefendAbsolute(LivingAttackEvent event) {
         if (event.getEntity() instanceof Player player && player.getPersistentData().getBoolean("TypewriterGodMode")) {
             event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onOnePunchHurt(LivingHurtEvent event) {
+        if (event.getSource().getDirectEntity() instanceof ServerPlayer player) {
+            int rewardId = player.getPersistentData().getInt("ActiveTypewriterRewardId");
+            if (rewardId == 7) {
+                event.setAmount(Float.MAX_VALUE);
+            }
         }
     }
 }

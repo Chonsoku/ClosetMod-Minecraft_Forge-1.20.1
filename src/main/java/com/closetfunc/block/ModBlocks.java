@@ -309,6 +309,8 @@ public class ModBlocks {
                 typewriterBe.checkAndResetForNewDay(level);
             }
 
+            boolean wasReset = !level.isClientSide && typewriterBe.dialogueStep == 0;
+
             if (heldItem.is(net.minecraft.world.item.Items.PAPER)) {
                 if (!state.getValue(HAS_PAPER)) {
                     if (!level.isClientSide) {
@@ -351,6 +353,7 @@ public class ModBlocks {
                     int pDialogueStep = playerNBT.getInt("TypewriterDialogueStep");
                     long pLastCompletedDay = playerNBT.getLong("TypewriterLastCompletedDay");
 
+                    // БЛОК ПЕРЕХОДА НА НОВЫЙ ДЕНЬ: если диалог был завершён (шаг 3) и наступил новый день
                     if (pDialogueStep == 3 && pLastCompletedDay != -1 && currentWorldDayIndex != pLastCompletedDay) {
                         if (pSurveyDay < com.closetfunc.event.SurveyManager.MAX_DAYS) {
                             pSurveyDay++;
@@ -366,7 +369,15 @@ public class ModBlocks {
                         playerNBT.putString("TypewriterFirstPageText", " "); 
                     }
                     
-                    if (pDialogueStep == 0) {
+                    // Если checkAndResetForNewDay() только что сбросил BE — принудительно сбрасываем и плеера
+                    if (wasReset) {
+                        pDialogueStep = 1;
+                        pSurveyDay = playerNBT.getInt("TypewriterSurveyDay");
+                        playerNBT.putInt("TypewriterDialogueStep", pDialogueStep);
+                        playerNBT.putString("TypewriterFirstPageText", " ");
+                    }
+                    // Иначе если плеерское шаг=0 (первый раз) — стартуем с шага 1
+                    else if (pDialogueStep == 0) {
                         pDialogueStep = 1;
                         playerNBT.putInt("TypewriterDialogueStep", pDialogueStep);
                         playerNBT.putString("TypewriterFirstPageText", " ");

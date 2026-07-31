@@ -27,6 +27,8 @@
   "text.closet_mod.typewriter.step2.2": "Понял.\nТы хотел бы себя когда нибудь ощутить полностью неуязвимым?]\n",
   "text.closet_mod.typewriter.step3.1": "Здравствуй!\nСвоими предыдущими 'подарками' я тебе наверняка сильно облегчил прохождение игры\nТы благодарен мне за такое?^",
   "text.closet_mod.typewriter.step3.2": "Хм. Допустим..\nТеперь, как на счёт комплекта незеритовой брони и оружия, вместе с элитрами?3",
+  "text.closet_mod.typewriter.step4.1": "Приветствую тебя снова...\nЗавтра будет нечто, что тебе определённо понравится)^",
+  "text.closet_mod.typewriter.step4.2": "Ты ведь правда хочешь это узреть?]",
 
 
   /// Сообщения для событий
@@ -35,5 +37,7 @@
   "text.closet_mod.typewriter.event2.good": "Ты продолжаешь мне нравится>>. Пора тебе ощутить себя полностью непобидимым!=\n",
   "text.closet_mod.typewriter.event2.bad": "Жаль... Зря ты отказываешься от таких полезных подарков(\n",
   "text.closet_mod.typewriter.event3.good": "Ты весьма предказуем, но мне это в тебе пожалуй и нравится@\n",
-  "text.closet_mod.typewriter.event3.bad": "что+ты+такое/\n"
+  "text.closet_mod.typewriter.event3.bad": "что+ты+такое/\n",
+  "text.closet_mod.typewriter.event4.good": "Перед завтрашним днём, я тебе дам шанс от души повеселится>\n",
+  "text.closet_mod.typewriter.event4.bad": "Не хочешь?..\nНу...\nк@к ск@жешь<\n"
 }

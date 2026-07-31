@@ -24,10 +24,16 @@ public class ModBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MainCloset.MOD_ID);
 
     public static final RegistryObject<BlockEntityType<ClosetBlockEntity>> CLOSET_BE = BLOCK_ENTITIES.register("closet_be", 
-        () -> BlockEntityType.Builder.of(ClosetBlockEntity::new, net.minecraft.world.level.block.Blocks.AIR).build(null));
+        () -> BlockEntityType.Builder.of(ClosetBlockEntity::new,
+            ModBlocks.CLOSET_BLOCK.get(),
+            ModBlocks.CLOSET_BATIM_BLOCK.get(),
+            ModBlocks.CLOSET_BALDI_BLOCK.get()
+        ).build(null));
 
     public static final RegistryObject<BlockEntityType<TypewriterBlockEntity>> TYPEWRITER_BE = BLOCK_ENTITIES.register("typewriter_be", 
-        () -> BlockEntityType.Builder.of(TypewriterBlockEntity::new, net.minecraft.world.level.block.Blocks.AIR).build(null));
+        () -> BlockEntityType.Builder.of(TypewriterBlockEntity::new,
+            ModBlocks.TYPEWRITER_BLOCK.get()
+        ).build(null));
 
 
 
@@ -302,7 +308,6 @@ public class ModBlockEntities {
                 this.rewardType = 0;
                 this.firstAnswerWasBad = false;
                 this.currentEventId = 0;
-                java.util.Arrays.fill(this.pagesText, ""); 
                 
                 this.lastSurveyDay = currentDay;
                 this.setChanged();

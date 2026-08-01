@@ -94,31 +94,25 @@ public class ModEvents {
 
 
         if (player.getPersistentData().contains("TypewriterEffectsExpiryDay")) {
-            long expiryDay = player.getPersistentData().getLong("TypewriterEffectsExpiryDay"); 
+            long expiryDay = player.getPersistentData().getLong("TypewriterEffectsExpiryDay");
+            long triggerDay = player.getPersistentData().getLong("TypewriterEffectsTriggerDay");
 
+            boolean dayChanged = currentDayIndex >= expiryDay || currentDayIndex < triggerDay;
 
-            if (currentDayIndex >= expiryDay) {
+            boolean tickExpired = false;
+            if (player.getPersistentData().contains("TypewriterEffectsExpiryTick")) {
+                tickExpired = level.getGameTime() >= player.getPersistentData().getLong("TypewriterEffectsExpiryTick");
+            }
+
+            if (dayChanged || tickExpired) {
                 int activeRewardId = player.getPersistentData().getInt("ActiveTypewriterRewardId");
-                
-                if (activeRewardId == SurveyManager.SPECIAL_EVENT_DAY_5 || activeRewardId == SurveyManager.SPECIAL_EVENT_DAY_10) {
-                    SpecialEvents.cleanup(activeRewardId, player, level);
-                } else if (activeRewardId % 2 != 0) {
-                    GoodRewards.cleanup(activeRewardId, player, level);
-                } else {
-                    BadRewards.cleanup(activeRewardId, player, level);
-                    
-                    if (activeRewardId == 4) {
-                        com.closetfunc.network.ModMessages.sendToPlayer(
-                            new com.closetfunc.network.ModMessages.ClientboundOpenTypewriterPacket(
-                                player.blockPosition(), 0, 0, "HARDCORE_END"
-                            ), 
-                            player
-                        );
-                    }
-                }
-                
+
+                SurveyManager.cleanupReward(activeRewardId, player, level);
+
                 player.getPersistentData().remove("ActiveTypewriterRewardId");
                 player.getPersistentData().remove("TypewriterEffectsExpiryDay");
+                player.getPersistentData().remove("TypewriterEffectsTriggerDay");
+                player.getPersistentData().remove("TypewriterEffectsExpiryTick");
                 player.getPersistentData().putBoolean("TypewriterEffectsCleanedUp", true);
             }
         }
@@ -138,7 +132,7 @@ public class ModEvents {
 
             if (activeRewardId == 4 && player.tickCount % 20 == 0) {
                 com.closetfunc.network.ModMessages.sendToPlayer(
-                    new com.closetfunc.network.ModMessages.ClientboundOpenTypewriterPacket(player.blockPosition(), 0, 2, "HARDCORE_SYNC"), 
+                    new com.closetfunc.network.ModMessages.ClientboundOpenTypewriterPacket(player.blockPosition(), 0, 2, "HARDCORE_SYNC", 0, 0, 0, 0, false), 
                     player
                 );
             }

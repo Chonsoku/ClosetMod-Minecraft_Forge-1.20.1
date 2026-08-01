@@ -24,10 +24,16 @@ public class ModBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MainCloset.MOD_ID);
 
     public static final RegistryObject<BlockEntityType<ClosetBlockEntity>> CLOSET_BE = BLOCK_ENTITIES.register("closet_be", 
-        () -> BlockEntityType.Builder.of(ClosetBlockEntity::new, net.minecraft.world.level.block.Blocks.AIR).build(null));
+        () -> BlockEntityType.Builder.of(ClosetBlockEntity::new,
+            ModBlocks.CLOSET_BLOCK.get(),
+            ModBlocks.CLOSET_BATIM_BLOCK.get(),
+            ModBlocks.CLOSET_BALDI_BLOCK.get()
+        ).build(null));
 
     public static final RegistryObject<BlockEntityType<TypewriterBlockEntity>> TYPEWRITER_BE = BLOCK_ENTITIES.register("typewriter_be", 
-        () -> BlockEntityType.Builder.of(TypewriterBlockEntity::new, net.minecraft.world.level.block.Blocks.AIR).build(null));
+        () -> BlockEntityType.Builder.of(TypewriterBlockEntity::new,
+            ModBlocks.TYPEWRITER_BLOCK.get()
+        ).build(null));
 
 
 
@@ -238,6 +244,7 @@ public class ModBlockEntities {
 
         public int surveyDay = 1;         // Какой день опроса СЕЙЧАС активен (1, 2, 3... 10)
         public long lastSurveyDay = -1; // На каких сутках мира (level.getDayTime() / 24000) был сдан ПОСЛЕДНИЙ опрос
+        public int currentSurveyPage = 0;
 
         public TypewriterBlockEntity(BlockPos pos, BlockState state) {
             super(TYPEWRITER_BE.get(), pos, state);
@@ -258,6 +265,7 @@ public class ModBlockEntities {
             
             tag.putInt("SurveyDay", this.surveyDay);
             tag.putLong("LastCompletedDay", this.lastSurveyDay);
+            tag.putInt("CurrentSurveyPage", this.currentSurveyPage);
 
             ListTag textList = new ListTag();
             for (String text : this.pagesText) {
@@ -280,6 +288,7 @@ public class ModBlockEntities {
             
             this.surveyDay = tag.contains("SurveyDay") ? tag.getInt("SurveyDay") : 1;
             this.lastSurveyDay = tag.contains("LastCompletedDay") ? tag.getLong("LastCompletedDay") : -1;
+            this.currentSurveyPage = tag.contains("CurrentSurveyPage") ? tag.getInt("CurrentSurveyPage") : 0;
             
             if (tag.contains("PagesText", 9)) {
                 ListTag textList = tag.getList("PagesText", 8);
@@ -303,9 +312,19 @@ public class ModBlockEntities {
                 this.firstAnswerWasBad = false;
                 this.currentEventId = 0;
                 
+                this.currentSurveyPage = findFirstEmptyPage();
+                
                 this.lastSurveyDay = currentDay;
                 this.setChanged();
             }
+        }
+
+        public int findFirstEmptyPage() {
+            for (int i = 0; i < this.pagesText.length; i++) {
+                String text = this.pagesText[i];
+                if (text == null || text.isBlank()) return i;
+            }
+            return 0;
         }
 
 

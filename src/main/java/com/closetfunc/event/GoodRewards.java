@@ -39,7 +39,7 @@ public class GoodRewards {
                 if (player.tickCount % 20 == 0) {
                     com.closetfunc.network.ModMessages.sendToPlayer(
                         new com.closetfunc.network.ModMessages.ClientboundOpenTypewriterPacket(
-                            player.blockPosition(), 0, 0, "HARDCORE_END"
+                            player.blockPosition(), 0, 0, "HARDCORE_END", 0, 0, 0, 0, false
                         ), 
                         player
                     );

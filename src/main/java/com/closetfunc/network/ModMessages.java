@@ -125,10 +125,6 @@ public class ModMessages {
                 playerNBT.putInt("TypewriterCurrentEventId", this.currentEventId);
                 playerNBT.putBoolean("TypewriterFirstAnswerWasBad", this.firstAnswerWasBad);
                 
-                if (this.pagesText != null && this.pagesText.length > 0) {
-                    playerNBT.putString("TypewriterFirstPageText", this.pagesText[0] != null ? this.pagesText[0] : " ");
-                }
-
                 if (level.hasChunkAt(pos) && level.getBlockEntity(pos) instanceof ModBlockEntities.TypewriterBlockEntity be) {
                     be.updateTextFromServer(this.pagesText);
                     be.dialogueStep = this.dialogueStep;
@@ -136,17 +132,28 @@ public class ModMessages {
                     be.currentEventId = this.currentEventId;
                     be.firstAnswerWasBad = this.firstAnswerWasBad;
                     
+                    if (this.pagesText != null && this.pagesText.length > 0) {
+                        int surveyPage = Math.max(0, Math.min(be.currentSurveyPage, this.pagesText.length - 1));
+                        playerNBT.putString("TypewriterFirstPageText", this.pagesText[surveyPage] != null ? this.pagesText[surveyPage] : " ");
+                    }
+                    
                     if (be.dialogueStep == 3) {
                         long currentDayIndex = level.getDayTime() / 24000L;
-                        
-                        be.lastSurveyDay = currentDayIndex;
-                        playerNBT.putLong("TypewriterLastCompletedDay", currentDayIndex);
 
-                        long timeOfDay = level.getDayTime() % 24000L;
-                        int ticksUntilNewDay = (int) (24000L - timeOfDay);
-                        if (ticksUntilNewDay <= 0) ticksUntilNewDay = 1;
+                        if (playerNBT.getInt("TypewriterRewardTriggeredDay") != be.surveyDay) {
+                            playerNBT.putInt("TypewriterRewardTriggeredDay", be.surveyDay);
 
-                        com.closetfunc.event.SurveyManager.triggerReward(be.rewardType, sender, level, ticksUntilNewDay);
+                            be.lastSurveyDay = currentDayIndex;
+                            playerNBT.putLong("TypewriterLastCompletedDay", currentDayIndex);
+
+                            long timeOfDay = level.getDayTime() % 24000L;
+                            int ticksUntilNewDay = (int) (24000L - timeOfDay);
+                            if (ticksUntilNewDay <= 0) ticksUntilNewDay = 1;
+
+                            com.closetfunc.event.SurveyManager.triggerReward(be.rewardType, sender, level, ticksUntilNewDay);
+
+                            be.rewardType = 0;
+                        }
                     }
                     
                     be.setChanged();
@@ -162,12 +169,22 @@ public class ModMessages {
         private final int paperCount;
         private final int surveyDay;
         private final String firstPageText;
+        private final int surveyPage;
+        private final int dialogueStep;
+        private final int rewardType;
+        private final int currentEventId;
+        private final boolean firstAnswerWasBad;
 
-        public ClientboundOpenTypewriterPacket(BlockPos pos, int paperCount, int surveyDay, String firstPageText) {
+        public ClientboundOpenTypewriterPacket(BlockPos pos, int paperCount, int surveyDay, String firstPageText, int surveyPage, int dialogueStep, int rewardType, int currentEventId, boolean firstAnswerWasBad) {
             this.pos = pos;
             this.paperCount = paperCount;
             this.surveyDay = surveyDay;
             this.firstPageText = firstPageText != null ? firstPageText : "";
+            this.surveyPage = surveyPage;
+            this.dialogueStep = dialogueStep;
+            this.rewardType = rewardType;
+            this.currentEventId = currentEventId;
+            this.firstAnswerWasBad = firstAnswerWasBad;
         }
 
         public ClientboundOpenTypewriterPacket(FriendlyByteBuf buf) {
@@ -175,6 +192,11 @@ public class ModMessages {
             this.paperCount = buf.readInt();
             this.surveyDay = buf.readInt();
             this.firstPageText = buf.readUtf();
+            this.surveyPage = buf.readInt();
+            this.dialogueStep = buf.readInt();
+            this.rewardType = buf.readInt();
+            this.currentEventId = buf.readInt();
+            this.firstAnswerWasBad = buf.readBoolean();
         }
 
         public void toBytes(FriendlyByteBuf buf) {
@@ -182,12 +204,17 @@ public class ModMessages {
             buf.writeInt(paperCount);
             buf.writeInt(surveyDay);
             buf.writeUtf(firstPageText);
+            buf.writeInt(surveyPage);
+            buf.writeInt(dialogueStep);
+            buf.writeInt(rewardType);
+            buf.writeInt(currentEventId);
+            buf.writeBoolean(firstAnswerWasBad);
         }
 
         public boolean handle(Supplier<NetworkEvent.Context> supplier) {
             NetworkEvent.Context context = supplier.get();
             context.enqueueWork(() -> {
-                com.closetfunc.client.ClosetClient.openCustomTypewriterScreen(this.pos, this.paperCount, this.surveyDay, this.firstPageText);
+                com.closetfunc.client.ClosetClient.openCustomTypewriterScreen(this.pos, this.paperCount, this.surveyDay, this.firstPageText, this.surveyPage, this.dialogueStep, this.rewardType, this.currentEventId, this.firstAnswerWasBad);
             });
             return true;
         }

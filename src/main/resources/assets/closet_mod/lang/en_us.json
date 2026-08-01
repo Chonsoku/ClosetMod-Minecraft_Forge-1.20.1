@@ -27,11 +27,8 @@
   "text.closet_mod.typewriter.step2.2": "Got it.\nWould you ever like to feel completely invulnerable?]\n",
   "text.closet_mod.typewriter.step3.1": "Hello!\nWith my previous 'gifts' I've probably made the game a lot easier for you.\nAre you grateful to me for this?^",
   "text.closet_mod.typewriter.step3.2": "Hmm. Let's say...\nNow, how about a set of netherite armor and weapons, along with the elytra?3",
-
-
-  /// Day 4 messages
-  "text.closet_mod.typewriter.step4.1": "You've come so far...\nAre you ready to accept my true power?^",
-  "text.closet_mod.typewriter.step4.2": "Or would you prefer to learn what true weakness really is?]",
+  "text.closet_mod.typewriter.step4.1": "Greetings again... \nTomorrow, there’s something you’re definitely going to like)^",
+  "text.closet_mod.typewriter.step4.2": "You really do want to see it, don't you?]",
 
 
   /// Messages events
@@ -41,9 +38,6 @@
   "text.closet_mod.typewriter.event2.bad": "It's a pity... You shouldn't refuse such useful gifts(\n",
   "text.closet_mod.typewriter.event3.good": "You're quite predictable, but I think I like that about you@\n",
   "text.closet_mod.typewriter.event3.bad": "what+are+you/\n",
-
-
-  /// Day 4 events
-  "text.closet_mod.typewriter.event4.good": "You've become one with me... The power of ONE PUNCH is now yours!>\n",
-  "text.closet_mod.typewriter.event4.bad": "Now you're fragile as glass... One hit and you're on the brink of death!<\n"
+  "text.closet_mod.typewriter.event4.good": "Before tomorrow comes, I'll give you a chance to have some real fun.>\n",
+  "text.closet_mod.typewriter.event4.bad": "You don't want to?.. \nWell... \nsu|t y@urse|f<\n"
 }

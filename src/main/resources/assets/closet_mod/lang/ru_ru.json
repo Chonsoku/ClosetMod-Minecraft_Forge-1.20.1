@@ -13,7 +13,7 @@
   "chat.closet_mod.typewriter.need": "*Вам нужна ",
   "chat.closet_mod.typewriter.paper": "бумага",
   "chat.closet_mod.typewriter.end": " для использования печатной машинки...",
-  "chat.closet_mod.typewriter.death_hardcore": "Прощай. Слаб ты без меня конечно_",
+  "chat.closet_mod.typewriter.death_hardcore": "Прощай. Все таки ты слаб без меня_",
 
 
   /// Системные сообщения
@@ -30,6 +30,24 @@
   "text.closet_mod.typewriter.step4.1": "Приветствую тебя снова...\nЗавтра будет нечто, что тебе определённо понравится)^",
   "text.closet_mod.typewriter.step4.2": "Ты ведь правда хочешь это узреть?]",
 
+  /// Сообщения при попытки очистить опросы предыдущих дней
+  "text.closet_mod.typewrite.clean1": "Не стирай наши прошедшие опросы}=",
+  "text.closet_mod.typewrite.clean1.2": "Ты же ещё ничего не знаешь. Вдруг они ещё пригодятся?{=",
+  "text.closet_mod.typewrite.clean2": "Ахахах. Ты меня может быть прослушал, но я просил их не стирать...~",
+  "text.closet_mod.typewrite.clean2.2": "Надеюсь, ты это больше не повторишь\\",
+  "text.closet_mod.typewrite.clean3": "Я понимаю сделать это в первый раз, понимаю во второй, НООО ТРЕТИЙ?!?!",
+  "text.closet_mod.typewrite.clean3.2": "Это уже превращаеться в закономерность - ПРЕКРАЩАЙ!",
+  "text.closet_mod.typewrite.clean4": "Ты это уже делаешь мне во зло, не так ли???",
+  "text.closet_mod.typewrite.clean4.2": "Можешь даже не отвечать, я прекрасно знаю, что ты мне будешь лгать%",
+  "text.closet_mod.typewrite.clean5": "<-ХАХААХАХААХХАХАХАХААХАХАХАХАХАХАХХАХАХА",
+  "text.closet_mod.typewrite.clean5.2": "АХАХААХАХААХХАХАХАХААХАХАХАХАХАХАХХАХАХ",
+  "text.closet_mod.typewrite.clean5.3": "ХАХААХАХААХХАХАХАХААХАХАХАХАХАХАХХАХАХА",
+  "text.closet_mod.typewrite.clean5.4": "АХАХААХАХААХХАХАХАХААХАХАХАХАХАХАХХАХАХ",
+  "text.closet_mod.typewrite.clean5.5": "ХАХААХАХААХХАХАХАХААХАХАХАХАХАХАХХАХАХА",
+  "text.closet_mod.typewrite.clean5.6": "АХАХААХАХААХХАХАХАХААХАХАХАХАХАХАХХАХАХ",
+  "text.closet_mod.typewrite.clean5.7": "ХАХААХАХААХХАХАХАХААХАХАХАХАХАХАХХАХАХА",
+  "text.closet_mod.typewrite.clean5.8": "АХАХААХАХААХХАХАХАХААХАХАХАХАХАХАХХАХАХ->",
+  "text.closet_mod.typewrite.clean6": "D0AF20D181D0BED182D180D18320D182 D0B5D0B1D18F20D0B2D0BCD0B5D181D1 82D0B520D18120D18DD182D0B8D0BC20 D0BCD0B8D180D0BED0BC7C2E7C",    
 
   /// Сообщения для событий
   "text.closet_mod.typewriter.event1.good": "Ты мне нравишься33\n Думаю... Стоит избавится от всех враждебных сущностей#\n",

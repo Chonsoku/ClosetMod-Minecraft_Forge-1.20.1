@@ -28,8 +28,26 @@
   "text.closet_mod.typewriter.step3.1": "Hello!\nWith my previous 'gifts' I've probably made the game a lot easier for you.\nAre you grateful to me for this?^",
   "text.closet_mod.typewriter.step3.2": "Hmm. Let's say...\nNow, how about a set of netherite armor and weapons, along with the elytra?3",
   "text.closet_mod.typewriter.step4.1": "Greetings again... \nTomorrow, there’s something you’re definitely going to like)^",
-  "text.closet_mod.typewriter.step4.2": "You really do want to see it, don't you?]",
+    "text.closet_mod.typewriter.step4.2": "You really do want to see it, don't you?]",
 
+  /// Messages when attempting to clear polls from previous days
+  "text.closet_mod.typewrite.clean1": "Don't delete our past polls}=",
+  "text.closet_mod.typewrite.clean1.2": "You don't know anything yet. What if they come in handy someday?{=",
+  "text.closet_mod.typewrite.clean2": "Hahaha. You might have missed what I said, but I asked you not to delete them...~",
+  "text.closet_mod.typewrite.clean2.2": "I hope you don’t do that again\\",
+  "text.closet_mod.typewrite.clean3": "I get doing it the first time, I get the second time, BUT THE THIRD?!?!",
+  "text.closet_mod.typewrite.clean3.2": "This is turning into a pattern - STOP IT!",
+  "text.closet_mod.typewrite.clean4": "You're doing this just to spite me, aren't you???",
+  "text.closet_mod.typewrite.clean4.2": "You don't even have to answer, I know perfectly well that you're going to lie to me%",
+  "text.closet_mod.typewrite.clean5": "<-HAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA",
+  "text.closet_mod.typewrite.clean5.2": "AHHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA",
+  "text.closet_mod.typewrite.clean5.3": "HAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA",
+  "text.closet_mod.typewrite.clean5.4": "AHHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA",
+  "text.closet_mod.typewrite.clean5.5": "HAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA",
+  "text.closet_mod.typewrite.clean5.6": "AHHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA",
+  "text.closet_mod.typewrite.clean5.7": "HAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA",
+    "text.closet_mod.typewrite.clean5.8": "AHHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA->",
+  "text.closet_mod.typewrite.clean6": "492077696C6C207769706520796F7520 6F757420616C6F6E6720776974682074 68697320776F726C647C2E7C",
 
   /// Messages events
   "text.closet_mod.typewriter.event1.good": "I like you33\n I think... It's worth getting rid of all hostile entities at night#\n",

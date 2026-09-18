@@ -25,8 +25,13 @@
   "text.closet_mod.typewriter.step1.2": "Interesting... Are you happy with the use of the closet?|\n",
   "text.closet_mod.typewriter.step2.1": "Hello again.\nDid you enjoy the event I gave you last night?}\n",
   "text.closet_mod.typewriter.step2.2": "Got it.\nWould you ever like to feel completely invulnerable?]\n",
-  "text.closet_mod.typewriter.step3.1": "Hello!\nWith my previous 'gifts' I've probably made the game a lot easier for you.\nAre you grateful to me for this?^",
+  "text.closet_mod.typewriter.step3.1": "I made your playthrough much easier with my previous 'gifts.'\nAre you grateful to me for that?^",
   "text.closet_mod.typewriter.step3.2": "Hmm. Let's say...\nNow, how about a set of netherite armor and weapons, along with the elytra?3",
+
+  "text.closet_mod.typewriter.step4.1": "I greet you once again...\nTomorrow, something extraordinary is in store! You really do want to witness it, don't you?",
+    "text.closet_mod.typewriter.step4.2": "Are you absolutely sure?]",
+    "text.closet_mod.typewriter.step5.1": "The day has finally arrived. Do you sense something interesting coming?",
+    "text.closet_mod.typewriter.step5.2": "Are you ready?=",
   "text.closet_mod.typewriter.step4.1": "Greetings again... \nTomorrow, there’s something you’re definitely going to like)^",
     "text.closet_mod.typewriter.step4.2": "You really do want to see it, don't you?]",
 
@@ -49,6 +54,16 @@
     "text.closet_mod.typewrite.clean5.8": "AHHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHA->",
   "text.closet_mod.typewrite.clean6": "492077696C6C207769706520796F7520 6F757420616C6F6E6720776974682074 68697320776F726C647C2E7C",
 
+   /// Messages in notes (Day 5)
+  "text.closet_mod.typewrite.note1": "§6§lYES -> NO",
+  "text.closet_mod.typewrite.note2": "§4§oNo one is going up.",
+  "text.closet_mod.typewrite.note3": "§4§oI see you.",
+  "text.closet_mod.typewrite.note4": "§4§oDon't look, or you'll be caught off guard.",
+  "text.closet_mod.typewrite.note5": "§4§oYou are the victim.",
+  "text.closet_mod.typewrite.note6": "§4§oWhy won't you just die?",
+  "text.closet_mod.typewrite.note7": "§4§oDid you really do it?",
+  "text.closet_mod.typewrite.note8": "§6§lDon't trust that entity anymore!\nIt's only using you for its own §kHphphphphphphph",
+    
   /// Messages events
   "text.closet_mod.typewriter.event1.good": "I like you33\n I think... It's worth getting rid of all hostile entities at night#\n",
   "text.closet_mod.typewriter.event1.bad": "I understand you... Goodbye. See you tomorrow-\n",
@@ -56,6 +71,8 @@
   "text.closet_mod.typewriter.event2.bad": "It's a pity... You shouldn't refuse such useful gifts(\n",
   "text.closet_mod.typewriter.event3.good": "You're quite predictable, but I think I like that about you@\n",
   "text.closet_mod.typewriter.event3.bad": "what+are+you/\n",
-  "text.closet_mod.typewriter.event4.good": "Before tomorrow comes, I'll give you a chance to have some real fun.>\n",
-  "text.closet_mod.typewriter.event4.bad": "You don't want to?.. \nWell... \nsu|t y@urse|f<\n"
+  "text.closet_mod.typewriter.event4.good": "Before tomorrow comes, I’ll give you a chance to have some real fun.\nFeel truly strong!",
+  "text.closet_mod.typewriter.event4.bad": "You don't want to?.. \nWell... \nsu|t y@urse|f<\n",
+  "text.closet_mod.typewriter.event5.good": "STO§k...",
+  "text.closet_mod.typewriter.event5.bad": "you are definitely very st§range =_0"
 }

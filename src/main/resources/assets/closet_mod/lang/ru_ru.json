@@ -25,10 +25,12 @@
   "text.closet_mod.typewriter.step1.2": "Интересно... Ты доволен использованием шкафа?|\n",
   "text.closet_mod.typewriter.step2.1": "Снова привет.\nТебе понравилось то событие, которое я тебе доровал прошлой ночью?}\n",
   "text.closet_mod.typewriter.step2.2": "Понял.\nТы хотел бы себя когда нибудь ощутить полностью неуязвимым?]\n",
-  "text.closet_mod.typewriter.step3.1": "Здравствуй!\nСвоими предыдущими 'подарками' я тебе наверняка сильно облегчил прохождение игры\nТы благодарен мне за такое?^",
+  "text.closet_mod.typewriter.step3.1": "Своими предыдущими 'подарками' я тебе сильно облегчил прохождение\nТы благодарен мне за такое?^",
   "text.closet_mod.typewriter.step3.2": "Хм. Допустим..\nТеперь, как на счёт комплекта незеритовой брони и оружия, вместе с элитрами?3",
-  "text.closet_mod.typewriter.step4.1": "Приветствую тебя снова...\nЗавтра будет нечто, что тебе определённо понравится)^",
-  "text.closet_mod.typewriter.step4.2": "Ты ведь правда хочешь это узреть?]",
+  "text.closet_mod.typewriter.step4.1": "Приветствую тебя снова...\nЗавтра будет нечто! Ты ведь правда хочешь это узреть?;",
+  "text.closet_mod.typewriter.step4.2": "Ты прям уверен]?",
+  "text.closet_mod.typewriter.step5.1": "Вот и настал этот день. Предвещаешь что-то интересное?'",
+  "text.closet_mod.typewriter.step5.2": "Ты готов?=",
 
   /// Сообщения при попытки очистить опросы предыдущих дней
   "text.closet_mod.typewrite.clean1": "Не стирай наши прошедшие опросы}=",
@@ -49,6 +51,16 @@
   "text.closet_mod.typewrite.clean5.8": "АХАХААХАХААХХАХАХАХААХАХАХАХАХАХАХХАХАХ->",
   "text.closet_mod.typewrite.clean6": "D0AF20D181D0BED182D180D18320D182 D0B5D0B1D18F20D0B2D0BCD0B5D181D1 82D0B520D18120D18DD182D0B8D0BC20 D0BCD0B8D180D0BED0BC7C2E7C",    
 
+  /// Сообщения в записках (5 день)
+  "text.closet_mod.typewrite.note1": "§6§lДА -> НЕТ",
+  "text.closet_mod.typewrite.note2": "§4§oНикто не уходит живым.",
+  "text.closet_mod.typewrite.note3": "§4§oЯ тебя вижу.",
+  "text.closet_mod.typewrite.note4": "§4§oНе смотри, иначе тебя застанет врасплох.",
+  "text.closet_mod.typewrite.note5": "§4§oТы - жертва.",
+  "text.closet_mod.typewrite.note6": "§4§oПочему ты просто не умрешь?",
+  "text.closet_mod.typewrite.note7": "§4§oТы правда это сделал?",
+    "text.closet_mod.typewrite.note8": "§6§lБольше не доверяй этой сущности!\nОно тебя лишь использует в своих §kХпхпхпхпхппхпх",
+
   /// Сообщения для событий
   "text.closet_mod.typewriter.event1.good": "Ты мне нравишься33\n Думаю... Стоит избавится от всех враждебных сущностей#\n",
   "text.closet_mod.typewriter.event1.bad": "Я тебя понял... Прощай. Увидимся завтра-\n",
@@ -56,6 +68,8 @@
   "text.closet_mod.typewriter.event2.bad": "Жаль... Зря ты отказываешься от таких полезных подарков(\n",
   "text.closet_mod.typewriter.event3.good": "Ты весьма предказуем, но мне это в тебе пожалуй и нравится@\n",
   "text.closet_mod.typewriter.event3.bad": "что+ты+такое/\n",
-  "text.closet_mod.typewriter.event4.good": "Перед завтрашним днём, я тебе дам шанс от души повеселится>\n",
-  "text.closet_mod.typewriter.event4.bad": "Не хочешь?..\nНу...\nк@к ск@жешь<\n"
+  "text.closet_mod.typewriter.event4.good": "Перед завтрашним днём, я тебе дам шанс от души повеселится.\nПочувствуй себя поистине сильным!",
+  "text.closet_mod.typewriter.event4.bad": "Не хочешь?..\nНу...\nк@к ск@жешь<\n",
+  "text.closet_mod.typewriter.event5.good": "ПРЕКРА§k...",
+  "text.closet_mod.typewriter.event5.bad": "ты определённо очень ст§kранный =_0"
 }
